@@ -1,0 +1,164 @@
+package io.github.qishr.cascara.java.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/// Represents a module node that contains directives, packages, and constant values.
+/// Implements the PackageOwner interface to manage contained packages.
+public class ModuleNode extends SemanticNode {
+    private boolean hasModuleInfo = false;
+    private String sourcePath;
+    private String mainClass = null;
+    private boolean isOpen = false;
+    private boolean isAutomatic = false;
+    private final List<AppliedAnnotationNode> annotations = new ArrayList<>();
+    private final List<DirectiveNode> directives = new ArrayList<>();
+    private final List<FieldNode> constantValues = new ArrayList<>();
+    private final List<PackageReference> packages = new ArrayList<>();
+
+    /// Constructs a ModuleNode with the given module name.
+    /// @param name The name of the module.
+    public ModuleNode(String name) {
+        this.name = NameUtil.createModuleName(name);
+        kind = SemanticNode.Kind.MODULE;
+    }
+
+    /// Returns the name (qualified name) of this module.
+    /// @return The module name.
+    public JlsName getName() {
+        return name;
+    }
+
+    public void setSourcePath(String path) {
+        this.sourcePath = path;
+    }
+
+    public String getSourcePath() {
+        return sourcePath;
+    }
+
+    public void setHasModuleInfo(boolean b) {
+        hasModuleInfo = b;
+    }
+
+    public boolean hasModuleInfo() {
+        return hasModuleInfo;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
+    public void setOpen(boolean isOpen) {
+        this.isOpen = isOpen;
+    }
+
+    public boolean isAutomatic() {
+        return isAutomatic;
+    }
+
+    public void setAutomatic(boolean isAutomatic) {
+        this.isAutomatic = isAutomatic;
+    }
+
+    public List<AppliedAnnotationNode> getAnnotations() {
+        return annotations;
+    }
+
+    public void addAppliedAnnotationNode(AppliedAnnotationNode annotation) {
+        this.annotations.add(annotation);
+    }
+
+    /// Returns the list of packages contained in this module.
+    /// @return List of PackageMember objects.
+    public List<PackageReference> getPackages() {
+        return packages;
+    }
+
+    /// Adds a package to this module.
+    /// @param packageNode The PackageReference to add.
+    public void addPackage(PackageReference packageNode) {
+        packages.add(packageNode);
+    }
+
+    public PackageReference getPackage(String name) {
+        for (PackageReference pr : packages) {
+            if (pr.getNameString().equals(name)) {
+                return pr;
+            }
+        }
+        return null;
+    }
+
+    /// Adds a directive to this module.
+    /// @param directive The DirectiveNode to add.
+    public void addDirective(DirectiveNode directive) {
+        directives.add(directive);
+    }
+
+    /// Returns the list of directives declared in this module.
+    /// @return List of DirectiveNode objects.
+    public List<DirectiveNode> getDirectives() {
+        return directives;
+    }
+
+    /// Adds a constant field value to this module.
+    /// @param constant The FieldNode representing the constant.
+    public void addConstantValue(FieldNode constant) {
+        constantValues.add(constant);
+    }
+
+    /// Returns the list of constant values defined in this module.
+    /// @return List of FieldNode objects.
+    public List<FieldNode> getConstantValues() {
+        return constantValues;
+    }
+
+    /// Returns the list of 'exports' directives in this module.
+    /// @return List of DirectiveNode objects filtered by EXPORTS kind.
+    public List<DirectiveNode> getExports() {
+        return directives.stream()
+                        .filter(item -> item.getKind() == DirectiveNode.Kind.EXPORTS)
+                        .toList();
+    }
+
+    /// Returns the list of 'requires' directives in this module.
+    /// @return List of DirectiveNode objects filtered by REQUIRES kind.
+    public List<DirectiveNode> getRequires() {
+        return directives.stream()
+                        .filter(item -> item.getKind() == DirectiveNode.Kind.REQUIRES)
+                        .toList();
+    }
+
+    /// Returns the list of 'opens' directives in this module.
+    /// @return List of DirectiveNode objects filtered by OPENS kind.
+    public List<DirectiveNode> getOpens() {
+        return directives.stream()
+                        .filter(item -> item.getKind() == DirectiveNode.Kind.OPENS)
+                        .toList();
+    }
+
+    /// Returns the list of 'uses' directives in this module.
+    /// @return List of DirectiveNode objects filtered by USES kind.
+    public List<DirectiveNode> getUses() {
+        return directives.stream()
+                        .filter(item -> item.getKind() == DirectiveNode.Kind.USES)
+                        .toList();
+    }
+
+    /// Returns the list of 'provides' directives in this module.
+    /// @return List of DirectiveNode objects filtered by PROVIDES kind.
+    public List<DirectiveNode> getProvides() {
+        return directives.stream()
+                        .filter(item -> item.getKind() == DirectiveNode.Kind.PROVIDES)
+                        .toList();
+    }
+}

@@ -1,0 +1,121 @@
+plugins {
+	id 'java-library'
+    id 'jacoco'
+    id "org.sonarqube" version "6.2.0.5505"
+    id 'signing'
+	id 'maven-publish'
+}
+
+group = 'io.github.qishr'
+version = '0.1.0'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+dependencies {
+	testImplementation(platform('org.junit:junit-bom:5.13.3'))
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.4'
+    testImplementation 'org.mockito:mockito-core:5.18.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.18.0'
+	testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+    implementation('io.github.qishr:cascara-common:0.1.0')
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.13"
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "qishr_cascara"
+    property "sonar.organization", "qishr"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
+
+def user = ["whoami"].execute().text.trim()
+jar {
+    archiveBaseName.set(rootProject.name)
+    manifest {
+        attributes( 'Main-Class': 'io.github.qishr.cascara.common.diagnostic.Diagnostic',
+                    'Implementation-Title': 'cascara-core',
+                    'Implementation-Version': version,
+                    'Implementation-Vendor': group,
+                    'Automatic-Module-Name': 'cascara.core',
+                    'Built-By': "${user}",
+                    'Built-Date': new Date())
+    }
+}
+
+jar.doLast {
+    def jarFile = archiveFile.get().asFile
+    ant.checksum file: jarFile
+}
+
+signing {
+    sign publishing.publications
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        myPub(MavenPublication) {
+            from components.java
+            artifactId = 'cascara-core'
+            pom {
+                name = 'cascara-core'
+                description = 'Java Utils'
+                url = 'https://qishr.github.io/cascara-core'
+                licenses {
+                    license {
+                        name = 'GPLv3'
+                        url = 'https://www.gnu.org/licenses/gpl-3.0.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'qishr'
+                        name = 'Sandy Dunlop'
+                        email = 'sandy.dunlop@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/qishr/cascara-core.git'
+                    developerConnection = 'scm:git:ssh://github.com:qishr/cascara-core.git'
+                    url = 'https://github.com/qishr/cascara-core'
+                }
+            }
+        }
+    }
+
+	repositories {
+        maven {
+            name = "LocalMavenWithChecksums"
+            url = uri(layout.buildDirectory.dir("staging-deploy"))
+        }
+    }
+}

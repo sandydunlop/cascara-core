@@ -1,0 +1,7 @@
+filegroups:
+  - java: ["*.java", "*.class", "*.jar"]
+  - gradle: ["*.gradle", "gradle.properties"]
+  - yaml: ["*.yaml", "*.yml"]
+  - json: ["*.json"]
+themeProject:
+    themeFile: "themes/Sandy's Theme-color-theme.json"

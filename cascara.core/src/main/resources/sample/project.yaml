@@ -1,0 +1,19 @@
+projectExtension: ThemeProjectExtension
+name: "Cascara Theme"
+themeProject:
+  themeFiles:
+    - "themes/cascara-og.json"
+  mappings:
+    areaBackground: sidebarBackground
+    controlBackground: activitybarInactiveBackground
+    controlForeground: activitybarInactiveForeground
+    accent: inputBackground
+    documentBackground: editorBackground
+  variations:
+    - name: "Cascara OG"
+      palette:
+        areaBackground: sidebarBackground
+    - name: "Cascara OG"
+      palette:
+        controlBackground: activitybarInactiveBackground
+
