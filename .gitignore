@@ -1,0 +1,9 @@
+.gradle
+.classpath
+.project
+.settings
+.vscode
+
+/build
+/cascara.core/build
+/cascara.core/bin
